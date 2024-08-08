@@ -2,7 +2,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { navItems } from "./nav-items";
+import Navbar from "./components/Navbar";
+import LocationScraper from "./pages/LocationScraper";
+import AccumulatedCompanies from "./pages/AccumulatedCompanies";
+import Overview from "./pages/Overview";
 
 const queryClient = new QueryClient();
 
@@ -11,10 +14,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
+        <Navbar />
         <Routes>
-          {navItems.map(({ to, page }) => (
-            <Route key={to} path={to} element={page} />
-          ))}
+          <Route path="/" element={<LocationScraper />} />
+          <Route path="/accumulated-companies" element={<AccumulatedCompanies />} />
+          <Route path="/overview" element={<Overview />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
