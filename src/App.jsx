@@ -3,7 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import LocationScraper from "./pages/LocationScraper";
+import LocationScraper from "./pages/Index";
 import AccumulatedCompanies from "./pages/AccumulatedCompanies";
 import Overview from "./pages/Overview";
 
