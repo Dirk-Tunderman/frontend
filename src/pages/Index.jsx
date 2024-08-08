@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Search } from "lucide-react";
+import { Search, FileJson } from "lucide-react";
 
-const LocationScraper = () => {
+const Index = () => {
   const [place, setPlace] = useState('');
   const [profession, setProfession] = useState('');
   const [results, setResults] = useState(null);
@@ -72,8 +73,15 @@ const LocationScraper = () => {
           )}
         </CardContent>
       </Card>
+      <div className="mt-8 text-center">
+        <Link to="/overview">
+          <Button variant="outline" className="bg-white hover:bg-gray-100">
+            <FileJson className="mr-2 h-4 w-4" /> View JSON Maps Overview
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default LocationScraper;
+export default Index;
