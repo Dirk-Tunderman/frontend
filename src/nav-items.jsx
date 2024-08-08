@@ -1,4 +1,4 @@
-import { Search, FileJson } from "lucide-react";
+import { MapPin, Building2 } from "lucide-react";
 import Index from "./pages/Index.jsx";
 import Overview from "./pages/Overview.jsx";
 
@@ -7,15 +7,15 @@ import Overview from "./pages/Overview.jsx";
  */
 export const navItems = [
   {
-    title: "Company Data Accumulator",
+    title: "Location Scraper",
     to: "/",
-    icon: <Search className="h-4 w-4" />,
+    icon: <MapPin className="h-4 w-4" />,
     page: <Index />,
   },
   {
-    title: "JSON Maps Overview",
+    title: "Accumulated Companies",
     to: "/overview",
-    icon: <FileJson className="h-4 w-4" />,
+    icon: <Building2 className="h-4 w-4" />,
     page: <Overview />,
   },
 ];

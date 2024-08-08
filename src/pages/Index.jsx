@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Search, FileJson } from "lucide-react";
+import { Search } from "lucide-react";
+import Navbar from '../components/Navbar';
 
 const Index = () => {
   const [place, setPlace] = useState('');
@@ -24,7 +24,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-purple-100 p-8">
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-purple-100">
+      <Navbar />
+      <div className="p-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center text-blue-600">Company Data Accumulator</CardTitle>
@@ -73,14 +75,8 @@ const Index = () => {
           )}
         </CardContent>
       </Card>
-      <div className="mt-8 text-center">
-        <Link to="/overview">
-          <Button variant="outline" className="bg-white hover:bg-gray-100">
-            <FileJson className="mr-2 h-4 w-4" /> View JSON Maps Overview
-          </Button>
-        </Link>
-      </div>
     </div>
+  </div>
   );
 };
 
