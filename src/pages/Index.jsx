@@ -24,13 +24,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-purple-100">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <div className="p-8">
-      <Card className="max-w-2xl mx-auto">
+      <Card className="max-w-2xl mx-auto border-2 border-orange-500">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-center text-blue-600">Company Data Accumulator</CardTitle>
-          <CardDescription className="text-center text-gray-600">
+          <CardTitle className="text-3xl font-bold text-center text-orange-500">Company Data Accumulator</CardTitle>
+          <CardDescription className="text-center text-black">
             Enter a place and profession/industry to find company information
           </CardDescription>
         </CardHeader>
@@ -52,7 +52,7 @@ const Index = () => {
                 className="w-full"
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white">
               <Search className="mr-2 h-4 w-4" /> Search
             </Button>
           </form>
