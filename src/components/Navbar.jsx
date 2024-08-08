@@ -6,7 +6,7 @@ const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="bg-black shadow-md">
+    <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -18,7 +18,7 @@ const Navbar = () => {
                 <Link key={item.to} to={item.to}>
                   <Button
                     variant={location.pathname === item.to ? "default" : "ghost"}
-                    className="inline-flex items-center px-1 pt-1 text-sm font-medium"
+                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-black"
                   >
                     {item.icon}
                     <span className="ml-2">{item.title}</span>
