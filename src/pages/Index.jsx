@@ -24,13 +24,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <Navbar />
       <div className="p-8">
-      <Card className="max-w-2xl mx-auto border-2 border-orange-500">
+      <Card className="max-w-2xl mx-auto border-2 border-orange-500 bg-black text-white">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center text-orange-500">Company Data Accumulator</CardTitle>
-          <CardDescription className="text-center text-black">
+          <CardDescription className="text-center text-gray-300">
             Enter a place and profession/industry to find company information
           </CardDescription>
         </CardHeader>
@@ -41,7 +41,7 @@ const Index = () => {
                 placeholder="Enter a place (e.g., New York, London)"
                 value={place}
                 onChange={(e) => setPlace(e.target.value)}
-                className="w-full"
+                className="w-full bg-gray-800 text-white"
               />
             </div>
             <div>
@@ -49,7 +49,7 @@ const Index = () => {
                 placeholder="Enter a profession/industry (e.g., Technology, Healthcare)"
                 value={profession}
                 onChange={(e) => setProfession(e.target.value)}
-                className="w-full"
+                className="w-full bg-gray-800 text-white"
               />
             </div>
             <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white">
@@ -59,14 +59,14 @@ const Index = () => {
 
           {results && (
             <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">Results:</h2>
+              <h2 className="text-xl font-semibold mb-4 text-orange-500">Results:</h2>
               <div className="space-y-4">
                 {results.companies.map((company, index) => (
-                  <Card key={index}>
+                  <Card key={index} className="bg-gray-800">
                     <CardContent className="p-4">
-                      <h3 className="font-bold">{company.name}</h3>
-                      <p>Industry: {company.industry}</p>
-                      <p>Employees: {company.employees}</p>
+                      <h3 className="font-bold text-white">{company.name}</h3>
+                      <p className="text-gray-300">Industry: {company.industry}</p>
+                      <p className="text-gray-300">Employees: {company.employees}</p>
                     </CardContent>
                   </Card>
                 ))}
