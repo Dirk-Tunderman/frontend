@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
@@ -38,36 +38,31 @@ const Overview = () => {
     <div className="min-h-screen bg-black">
       <Navbar />
       <div className="p-8">
-        <Card className="max-w-6xl mx-auto border-2 border-orange-500 bg-black text-white">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center text-orange-500">Accumulated Companies</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {companies.map((company) => (
-                <Card key={company.id} className="hover:shadow-lg transition-shadow duration-300 border border-orange-300 bg-gray-800">
-                  <CardContent className="p-4 flex flex-col items-start space-y-2">
-                    <div className="flex items-center justify-between w-full">
-                      <Building2 className="h-6 w-6 text-orange-500" />
-                      <Checkbox
-                        checked={selectedCompanies.includes(company.id)}
-                        onCheckedChange={() => handleCompanySelection(company.id)}
-                      />
-                    </div>
-                    <h3 className="font-semibold text-white">{company.name}</h3>
-                    <p className="text-sm text-gray-300">{company.website}</p>
-                    <p className="text-sm text-gray-300">{company.phone}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <div className="mt-6 flex justify-center">
-              <Button onClick={handleSubmit} className="bg-orange-500 hover:bg-orange-600 text-white">
-                Submit Selected Companies
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Accumulated Companies</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {companies.map((company) => (
+            <Card key={company.id} className="bg-gray-800 border border-orange-300 hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <Building2 className="h-6 w-6 text-orange-500" />
+                  <Checkbox
+                    checked={selectedCompanies.includes(company.id)}
+                    onCheckedChange={() => handleCompanySelection(company.id)}
+                    className="border-orange-500"
+                  />
+                </div>
+                <h3 className="font-semibold text-white text-lg mb-1">{company.name}</h3>
+                <p className="text-sm text-gray-300">{company.website}</p>
+                <p className="text-sm text-gray-300">{company.phone}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Button onClick={handleSubmit} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+            Submit Selected Companies
+          </Button>
+        </div>
       </div>
     </div>
   );
