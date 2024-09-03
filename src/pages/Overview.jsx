@@ -12,11 +12,11 @@ const Overview = () => {
   useEffect(() => {
     // Simulating fetching companies from an API
     const dummyCompanies = [
-      { id: 1, name: 'TechCorp', website: 'www.techcorp.com', phone: '+1 (555) 123-4567' },
-      { id: 2, name: 'MediHealth', website: 'www.medihealth.com', phone: '+1 (555) 987-6543' },
-      { id: 3, name: 'GreenEnergy', website: 'www.greenenergy.com', phone: '+1 (555) 456-7890' },
-      { id: 4, name: 'DataSoft', website: 'www.datasoft.com', phone: '+1 (555) 234-5678' },
-      { id: 5, name: 'EcoFriendly', website: 'www.ecofriendly.com', phone: '+1 (555) 876-5432' },
+      { id: 1, industry: 'Technology', location: 'San Francisco, CA' },
+      { id: 2, industry: 'Healthcare', location: 'Boston, MA' },
+      { id: 3, industry: 'Renewable Energy', location: 'Austin, TX' },
+      { id: 4, industry: 'Finance', location: 'New York, NY' },
+      { id: 5, industry: 'E-commerce', location: 'Seattle, WA' },
     ];
     setCompanies(dummyCompanies);
   }, []);
@@ -51,9 +51,8 @@ const Overview = () => {
                     className="border-orange-500"
                   />
                 </div>
-                <h3 className="font-semibold text-white text-lg mb-1">{company.name}</h3>
-                <p className="text-sm text-gray-300">{company.website}</p>
-                <p className="text-sm text-gray-300">{company.phone}</p>
+                <h3 className="font-semibold text-white text-lg mb-1">{company.industry}</h3>
+                <p className="text-sm text-gray-300">{company.location}</p>
               </CardContent>
             </Card>
           ))}
