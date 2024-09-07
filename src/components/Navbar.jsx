@@ -9,23 +9,22 @@ const Navbar = () => {
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-orange-500">Veloxforce DA</span>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to}>
-                  <Button
-                    variant={location.pathname === item.to ? "default" : "ghost"}
-                    className="inline-flex items-center px-1 pt-1 text-sm font-medium text-black"
-                  >
-                    {item.icon}
-                    <span className="ml-2">{item.title}</span>
-                  </Button>
-                </Link>
-              ))}
-            </div>
+          <div className="flex items-center">
+            <img src="/logo.svg" alt="Veloxforce DA Logo" className="h-8 w-8 mr-2" />
+            <span className="text-2xl font-bold text-orange-500">Veloxforce DA</span>
+          </div>
+          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            {navItems.map((item) => (
+              <Link key={item.to} to={item.to}>
+                <Button
+                  variant={location.pathname === item.to ? "default" : "ghost"}
+                  className="inline-flex items-center px-1 pt-1 text-sm font-medium text-black"
+                >
+                  {item.icon}
+                  <span className="ml-2">{item.title}</span>
+                </Button>
+              </Link>
+            ))}
           </div>
         </div>
       </div>
