@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import Navbar from '../components/Navbar';
 
 const CompanyTable = () => {
@@ -24,15 +24,19 @@ const CompanyTable = () => {
     navigate('/email-creation');
   };
 
+  const handleCreateEmailLinkedIn = () => {
+    navigate('/email-linkedin-creation');
+  };
+
   return (
     <div className="min-h-screen bg-black">
       <Navbar />
       <div className="p-8">
-        <Button onClick={handleBack} className="mb-8 bg-orange-500 hover:bg-orange-600 text-white">
+        <Button onClick={handleBack} className="mb-4 bg-orange-500 hover:bg-orange-600 text-white">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Email Templates
         </Button>
         <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Company Details for Template {templateId}</h1>
-        <div className="bg-gray-800 rounded-lg overflow-hidden">
+        <div className="bg-gray-800 rounded-lg overflow-hidden mb-8">
           <Table>
             <TableHeader>
               <TableRow>
@@ -59,6 +63,13 @@ const CompanyTable = () => {
               ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="flex justify-center">
+          <Button onClick={handleCreateEmailLinkedIn} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+            <Mail className="mr-2 h-4 w-4" />
+            <Linkedin className="mr-2 h-4 w-4" />
+            Create Email & LinkedIn Request
+          </Button>
         </div>
       </div>
     </div>
