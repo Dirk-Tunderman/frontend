@@ -3,6 +3,7 @@ import Index from "./pages/Index.jsx";
 import Overview from "./pages/Overview.jsx";
 import EmailCreation from "./pages/EmailCreation.jsx";
 import Criteria from "./pages/Criteria.jsx";
+import CompanyTable from "./pages/CompanyTable.jsx";
 
 /**
  * Central place for defining the navigation items. Used for navigation components and routing.
@@ -32,5 +33,9 @@ export const hiddenRoutes = [
   {
     to: "/criteria",
     page: <Criteria />,
+  },
+  {
+    to: "/company-table/:templateId",
+    page: <CompanyTable />,
   },
 ];

@@ -22,8 +22,8 @@ const EmailCreation = () => {
   }, []);
 
   const handleTemplateClick = (templateId) => {
-    // Navigate to a new page with the template details
-    navigate(`/email-template/${templateId}`);
+    // Navigate to the CompanyTable page with the template ID
+    navigate(`/company-table/${templateId}`);
   };
 
   return (
@@ -47,11 +47,6 @@ const EmailCreation = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
-        <div className="mt-8 flex justify-center">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
-            Create New Template
-          </Button>
         </div>
       </div>
     </div>
