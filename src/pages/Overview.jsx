@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import Navbar from '../components/Navbar';
 const Overview = () => {
   const [companies, setCompanies] = useState([]);
   const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Simulating fetching companies from an API
@@ -30,8 +32,11 @@ const Overview = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Selected companies:', selectedCompanies);
-    // Here you would typically send the selected companies to your backend
+    if (selectedCompanies.length > 0) {
+      navigate('/criteria', { state: { selectedCompanies } });
+    } else {
+      alert('Please select at least one company before submitting.');
+    }
   };
 
   return (
