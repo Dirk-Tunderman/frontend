@@ -14,11 +14,11 @@ const Overview = () => {
   useEffect(() => {
     // Simulating fetching companies from an API
     const dummyCompanies = [
-      { id: 1, industry: 'Technology', location: 'San Francisco, CA' },
-      { id: 2, industry: 'Healthcare', location: 'Boston, MA' },
-      { id: 3, industry: 'Renewable Energy', location: 'Austin, TX' },
-      { id: 4, industry: 'Finance', location: 'New York, NY' },
-      { id: 5, industry: 'E-commerce', location: 'Seattle, WA' },
+      { id: 1, name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA' },
+      { id: 2, name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA' },
+      { id: 3, name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX' },
+      { id: 4, name: 'FinanceHub', industry: 'Finance', location: 'New York, NY' },
+      { id: 5, name: 'ShopNow', industry: 'E-commerce', location: 'Seattle, WA' },
     ];
     setCompanies(dummyCompanies);
   }, []);
@@ -33,7 +33,8 @@ const Overview = () => {
 
   const handleSubmit = () => {
     if (selectedCompanies.length > 0) {
-      navigate('/criteria', { state: { selectedCompanies } });
+      const selectedCompanyData = companies.filter(company => selectedCompanies.includes(company.id));
+      navigate('/criteria', { state: { selectedCompanies: selectedCompanyData } });
     } else {
       alert('Please select at least one company before submitting.');
     }
@@ -56,7 +57,8 @@ const Overview = () => {
                     className="border-orange-500"
                   />
                 </div>
-                <h3 className="font-semibold text-white text-lg mb-1">{company.industry}</h3>
+                <h3 className="font-semibold text-white text-lg mb-1">{company.name}</h3>
+                <p className="text-sm text-gray-300">{company.industry}</p>
                 <p className="text-sm text-gray-300">{company.location}</p>
               </CardContent>
             </Card>
