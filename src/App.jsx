@@ -12,7 +12,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col relative">
+        <div className="min-h-screen flex flex-col">
           <div className="flex-grow">
             <Routes>
               {navItems.map(({ to, page }) => (
@@ -23,9 +23,6 @@ const App = () => (
               ))}
               <Route path="/email-linkedin-creation" element={<EmailLinkedInCreation />} />
             </Routes>
-          </div>
-          <div className="fixed bottom-4 right-4 z-50">
-            <img src="/veloxforce-logo.png" alt="Veloxforce Logo" className="w-48 h-auto" />
           </div>
         </div>
       </BrowserRouter>
