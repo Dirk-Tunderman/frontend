@@ -24,7 +24,7 @@ const App = () => (
               <Route path="/email-linkedin-creation" element={<EmailLinkedInCreation />} />
             </Routes>
           </div>
-          <div className="fixed bottom-4 left-4">
+          <div className="fixed bottom-4 right-4">
             <img src="/logo.svg" alt="Logo" className="w-24 h-24" />
           </div>
         </div>
