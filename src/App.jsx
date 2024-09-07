@@ -2,8 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { navItems, hiddenRoutes } from "./nav-items";
-import EmailLinkedInCreation from "./pages/EmailLinkedInCreation";
+import { navItems } from "./nav-items";
 
 const queryClient = new QueryClient();
 
@@ -12,22 +11,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col relative">
-          <div className="flex-grow">
-            <Routes>
-              {navItems.map(({ to, page }) => (
-                <Route key={to} path={to} element={page} />
-              ))}
-              {hiddenRoutes.map(({ to, page }) => (
-                <Route key={to} path={to} element={page} />
-              ))}
-              <Route path="/email-linkedin-creation" element={<EmailLinkedInCreation />} />
-            </Routes>
-          </div>
-          <div className="fixed bottom-4 right-4 z-50">
-            <img src="/veloxforce-logo.png" alt="Veloxforce Logo" className="w-48 h-12" />
-          </div>
-        </div>
+        <Routes>
+          {navItems.map(({ to, page }) => (
+            <Route key={to} path={to} element={page} />
+          ))}
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
