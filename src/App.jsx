@@ -12,15 +12,22 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <Routes>
-          {navItems.map(({ to, page }) => (
-            <Route key={to} path={to} element={page} />
-          ))}
-          {hiddenRoutes.map(({ to, page }) => (
-            <Route key={to} path={to} element={page} />
-          ))}
-          <Route path="/email-linkedin-creation" element={<EmailLinkedInCreation />} />
-        </Routes>
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-grow">
+            <Routes>
+              {navItems.map(({ to, page }) => (
+                <Route key={to} path={to} element={page} />
+              ))}
+              {hiddenRoutes.map(({ to, page }) => (
+                <Route key={to} path={to} element={page} />
+              ))}
+              <Route path="/email-linkedin-creation" element={<EmailLinkedInCreation />} />
+            </Routes>
+          </div>
+          <div className="fixed bottom-4 left-4">
+            <img src="/logo.svg" alt="Logo" className="w-24 h-24" />
+          </div>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
