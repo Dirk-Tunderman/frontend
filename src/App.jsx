@@ -12,7 +12,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col relative">
           <div className="flex-grow">
             <Routes>
               {navItems.map(({ to, page }) => (
