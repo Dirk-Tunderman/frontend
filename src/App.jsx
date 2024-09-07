@@ -25,7 +25,7 @@ const App = () => (
             </Routes>
           </div>
           <div className="fixed bottom-4 right-4 z-50">
-            <img src="/veloxforce-logo.png" alt="Veloxforce Logo" className="w-48 h-12" />
+            <img src="/veloxforce-logo.png" alt="Veloxforce Logo" className="w-48 h-auto" />
           </div>
         </div>
       </BrowserRouter>
