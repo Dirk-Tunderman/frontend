@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Linkedin } from "lucide-react";
+import { ArrowLeft, Mail, Linkedin, Database } from "lucide-react";
 import Navbar from '../components/Navbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -10,9 +10,7 @@ const CompanyDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulating fetching company details from an API
     const fetchCompanyDetails = async () => {
-      // In a real application, you would fetch data from your API here
       const dummyCompanies = [
         { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true, website: 'techcorp.com', phoneNumber: '123-456-7890', decisionMakers: 'John Doe', contactInfo: 'john@techcorp.com', rankingScore: 85, emailsFound: 'Yes' },
         { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false, website: 'medihealth.com', phoneNumber: '234-567-8901' },
@@ -30,15 +28,13 @@ const CompanyDetails = () => {
     navigate('/overview');
   };
 
-  const handleOutreachCampaign = () => {
-    console.log('Starting outreach campaign for enriched companies');
+  const handleOutreachCampaign = (companyId) => {
+    console.log('Starting outreach campaign for company:', companyId);
   };
 
-  const handleAccumulateData = () => {
-    console.log('Starting data accumulation for selected companies');
+  const handleAccumulateData = (companyId) => {
+    console.log('Starting data accumulation for company:', companyId);
   };
-
-  const hasEnrichedCompanies = companies.some(company => company.enriched);
 
   if (companies.length === 0) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>;
 
@@ -59,14 +55,11 @@ const CompanyDetails = () => {
                 <TableHead className="text-orange-500">Location</TableHead>
                 <TableHead className="text-orange-500">Website</TableHead>
                 <TableHead className="text-orange-500">Phone Number</TableHead>
-                {hasEnrichedCompanies && (
-                  <>
-                    <TableHead className="text-orange-500">Decision Makers</TableHead>
-                    <TableHead className="text-orange-500">Contact Info</TableHead>
-                    <TableHead className="text-orange-500">Ranking Score</TableHead>
-                    <TableHead className="text-orange-500">Emails Found</TableHead>
-                  </>
-                )}
+                <TableHead className="text-orange-500">Decision Makers</TableHead>
+                <TableHead className="text-orange-500">Contact Info</TableHead>
+                <TableHead className="text-orange-500">Ranking Score</TableHead>
+                <TableHead className="text-orange-500">Emails Found</TableHead>
+                <TableHead className="text-orange-500">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -77,30 +70,28 @@ const CompanyDetails = () => {
                   <TableCell className="text-white">{company.location}</TableCell>
                   <TableCell className="text-white">{company.website}</TableCell>
                   <TableCell className="text-white">{company.phoneNumber}</TableCell>
-                  {company.enriched && (
-                    <>
-                      <TableCell className="text-white">{company.decisionMakers}</TableCell>
-                      <TableCell className="text-white">{company.contactInfo}</TableCell>
-                      <TableCell className="text-white">{company.rankingScore}</TableCell>
-                      <TableCell className="text-white">{company.emailsFound}</TableCell>
-                    </>
-                  )}
+                  <TableCell className="text-white">{company.enriched ? company.decisionMakers : 'N/A'}</TableCell>
+                  <TableCell className="text-white">{company.enriched ? company.contactInfo : 'N/A'}</TableCell>
+                  <TableCell className="text-white">{company.enriched ? company.rankingScore : 'N/A'}</TableCell>
+                  <TableCell className="text-white">{company.enriched ? company.emailsFound : 'N/A'}</TableCell>
+                  <TableCell>
+                    {company.enriched ? (
+                      <Button onClick={() => handleOutreachCampaign(company.id)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2">
+                        <Mail className="mr-2 h-4 w-4" />
+                        <Linkedin className="mr-2 h-4 w-4" />
+                        Outreach
+                      </Button>
+                    ) : (
+                      <Button onClick={() => handleAccumulateData(company.id)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2">
+                        <Database className="mr-2 h-4 w-4" />
+                        Accumulate Data
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </div>
-        <div className="flex justify-center space-x-4">
-          {hasEnrichedCompanies && (
-            <Button onClick={handleOutreachCampaign} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
-              <Mail className="mr-2 h-4 w-4" />
-              <Linkedin className="mr-2 h-4 w-4" />
-              Start Outreach Campaign
-            </Button>
-          )}
-          <Button onClick={handleAccumulateData} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
-            Start Accumulating Data
-          </Button>
         </div>
       </div>
     </div>
