@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, Linkedin } from "lucide-react";
 import Navbar from '../components/Navbar';
@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 const CompanyDetails = () => {
   const [companies, setCompanies] = useState([]);
-  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,21 +24,21 @@ const CompanyDetails = () => {
     };
 
     fetchCompanyDetails();
-  }, [id]);
+  }, []);
 
   const handleBack = () => {
     navigate('/overview');
   };
 
   const handleOutreachCampaign = () => {
-    // Implement outreach campaign logic here
-    console.log('Starting outreach campaign for selected companies');
+    console.log('Starting outreach campaign for enriched companies');
   };
 
   const handleAccumulateData = () => {
-    // Implement data accumulation logic here
     console.log('Starting data accumulation for selected companies');
   };
+
+  const hasEnrichedCompanies = companies.some(company => company.enriched);
 
   if (companies.length === 0) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>;
 
@@ -60,7 +59,7 @@ const CompanyDetails = () => {
                 <TableHead className="text-orange-500">Location</TableHead>
                 <TableHead className="text-orange-500">Website</TableHead>
                 <TableHead className="text-orange-500">Phone Number</TableHead>
-                {companies.some(c => c.enriched) && (
+                {hasEnrichedCompanies && (
                   <>
                     <TableHead className="text-orange-500">Decision Makers</TableHead>
                     <TableHead className="text-orange-500">Contact Info</TableHead>
@@ -92,11 +91,13 @@ const CompanyDetails = () => {
           </Table>
         </div>
         <div className="flex justify-center space-x-4">
-          <Button onClick={handleOutreachCampaign} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
-            <Mail className="mr-2 h-4 w-4" />
-            <Linkedin className="mr-2 h-4 w-4" />
-            Start Outreach Campaign
-          </Button>
+          {hasEnrichedCompanies && (
+            <Button onClick={handleOutreachCampaign} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+              <Mail className="mr-2 h-4 w-4" />
+              <Linkedin className="mr-2 h-4 w-4" />
+              Start Outreach Campaign
+            </Button>
+          )}
           <Button onClick={handleAccumulateData} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
             Start Accumulating Data
           </Button>
