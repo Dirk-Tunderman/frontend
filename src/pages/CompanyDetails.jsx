@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, Linkedin, Database } from "lucide-react";
 import Navbar from '../components/Navbar';
@@ -7,36 +7,41 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 const CompanyDetails = () => {
   const [companies, setCompanies] = useState([]);
+  const [isEnriched, setIsEnriched] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchCompanyDetails = async () => {
+      // Simulating API call to fetch company details
       const dummyCompanies = [
-        { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true, website: 'techcorp.com', phoneNumber: '123-456-7890', decisionMakers: 'John Doe', contactInfo: 'john@techcorp.com', rankingScore: 85, emailsFound: 'Yes' },
-        { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false, website: 'medihealth.com', phoneNumber: '234-567-8901' },
-        { id: '3', name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX', enriched: true, website: 'greenenergy.com', phoneNumber: '345-678-9012', decisionMakers: 'Jane Smith', contactInfo: 'jane@greenenergy.com', rankingScore: 92, emailsFound: 'Yes' },
-        { id: '4', name: 'FinanceHub', industry: 'Finance', location: 'New York, NY', enriched: false, website: 'financehub.com', phoneNumber: '456-789-0123' },
-        { id: '5', name: 'ShopNow', industry: 'E-commerce', location: 'Seattle, WA', enriched: true, website: 'shopnow.com', phoneNumber: '567-890-1234', decisionMakers: 'Bob Johnson', contactInfo: 'bob@shopnow.com', rankingScore: 78, emailsFound: 'Yes' },
+        { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', website: 'techcorp.com', phoneNumber: '123-456-7890' },
+        { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', website: 'medihealth.com', phoneNumber: '234-567-8901' },
+        { id: '3', name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX', website: 'greenenergy.com', phoneNumber: '345-678-9012' },
       ];
       setCompanies(dummyCompanies);
+
+      // Check if the company is enriched (this would typically come from your API)
+      const enrichedStatus = ['1', '3'].includes(id); // Dummy logic for demonstration
+      setIsEnriched(enrichedStatus);
     };
 
     fetchCompanyDetails();
-  }, []);
+  }, [id]);
 
   const handleBack = () => {
     navigate('/overview');
   };
 
-  const handleOutreachCampaign = (companyId) => {
-    console.log('Starting outreach campaign for company:', companyId);
+  const handleEnrichData = () => {
+    console.log('Enriching data for all companies');
+    setIsEnriched(true);
   };
 
-  const handleAccumulateData = (companyId) => {
-    console.log('Starting data accumulation for company:', companyId);
+  const handleStartCampaign = () => {
+    console.log('Starting outreach campaign');
+    // Implement campaign logic here
   };
-
-  if (companies.length === 0) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-black">
@@ -55,11 +60,6 @@ const CompanyDetails = () => {
                 <TableHead className="text-orange-500">Location</TableHead>
                 <TableHead className="text-orange-500">Website</TableHead>
                 <TableHead className="text-orange-500">Phone Number</TableHead>
-                <TableHead className="text-orange-500">Decision Makers</TableHead>
-                <TableHead className="text-orange-500">Contact Info</TableHead>
-                <TableHead className="text-orange-500">Ranking Score</TableHead>
-                <TableHead className="text-orange-500">Emails Found</TableHead>
-                <TableHead className="text-orange-500">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -70,28 +70,24 @@ const CompanyDetails = () => {
                   <TableCell className="text-white">{company.location}</TableCell>
                   <TableCell className="text-white">{company.website}</TableCell>
                   <TableCell className="text-white">{company.phoneNumber}</TableCell>
-                  <TableCell className="text-white">{company.enriched ? company.decisionMakers : 'N/A'}</TableCell>
-                  <TableCell className="text-white">{company.enriched ? company.contactInfo : 'N/A'}</TableCell>
-                  <TableCell className="text-white">{company.enriched ? company.rankingScore : 'N/A'}</TableCell>
-                  <TableCell className="text-white">{company.enriched ? company.emailsFound : 'N/A'}</TableCell>
-                  <TableCell>
-                    {company.enriched ? (
-                      <Button onClick={() => handleOutreachCampaign(company.id)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2">
-                        <Mail className="mr-2 h-4 w-4" />
-                        <Linkedin className="mr-2 h-4 w-4" />
-                        Outreach
-                      </Button>
-                    ) : (
-                      <Button onClick={() => handleAccumulateData(company.id)} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2">
-                        <Database className="mr-2 h-4 w-4" />
-                        Accumulate Data
-                      </Button>
-                    )}
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+        </div>
+        <div className="flex justify-center">
+          {!isEnriched ? (
+            <Button onClick={handleEnrichData} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+              <Database className="mr-2 h-4 w-4" />
+              Enrich All Companies
+            </Button>
+          ) : (
+            <Button onClick={handleStartCampaign} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+              <Mail className="mr-2 h-4 w-4" />
+              <Linkedin className="mr-2 h-4 w-4" />
+              Start Outreach Campaign
+            </Button>
+          )}
         </div>
       </div>
     </div>

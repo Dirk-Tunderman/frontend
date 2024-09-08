@@ -65,7 +65,7 @@ const Overview = () => {
                 <h3 className="font-semibold text-white text-lg mb-1">{company.name}</h3>
                 <p className="text-sm text-gray-300">{company.industry}</p>
                 <p className="text-sm text-gray-300">{company.location}</p>
-                <p className="text-sm text-orange-500 mt-2">
+                <p className={`text-sm mt-2 ${company.enriched ? 'text-green-500' : 'text-red-500'}`}>
                   {company.enriched ? 'Enriched' : 'Not Enriched'}
                 </p>
               </CardContent>
