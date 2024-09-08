@@ -14,11 +14,11 @@ const Overview = () => {
   useEffect(() => {
     // Simulating fetching companies from an API
     const dummyCompanies = [
-      { id: 1, name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true },
-      { id: 2, name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false },
-      { id: 3, name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX', enriched: true },
-      { id: 4, name: 'FinanceHub', industry: 'Finance', location: 'New York, NY', enriched: false },
-      { id: 5, name: 'ShopNow', industry: 'E-commerce', location: 'Seattle, WA', enriched: true },
+      { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true },
+      { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false },
+      { id: '3', name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX', enriched: true },
+      { id: '4', name: 'FinanceHub', industry: 'Finance', location: 'New York, NY', enriched: false },
+      { id: '5', name: 'ShopNow', industry: 'E-commerce', location: 'Seattle, WA', enriched: true },
     ];
     setCompanies(dummyCompanies);
   }, []);

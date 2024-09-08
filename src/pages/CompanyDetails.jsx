@@ -12,12 +12,17 @@ const CompanyDetails = () => {
 
   useEffect(() => {
     // Simulating fetching company details from an API
-    const dummyCompanies = [
-      { id: 1, name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true, website: 'techcorp.com', phoneNumber: '123-456-7890', decisionMakers: 'John Doe', contactInfo: 'john@techcorp.com', rankingScore: 85, emailsFound: 'Yes' },
-      { id: 2, name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false, website: 'medihealth.com', phoneNumber: '234-567-8901' },
-    ];
-    const foundCompany = dummyCompanies.find(c => c.id === parseInt(id));
-    setCompany(foundCompany);
+    const fetchCompanyDetails = async () => {
+      // In a real application, you would fetch data from your API here
+      const dummyCompanies = [
+        { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true, website: 'techcorp.com', phoneNumber: '123-456-7890', decisionMakers: 'John Doe', contactInfo: 'john@techcorp.com', rankingScore: 85, emailsFound: 'Yes' },
+        { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false, website: 'medihealth.com', phoneNumber: '234-567-8901' },
+      ];
+      const foundCompany = dummyCompanies.find(c => c.id === id);
+      setCompany(foundCompany);
+    };
+
+    fetchCompanyDetails();
   }, [id]);
 
   const handleBack = () => {
@@ -29,7 +34,7 @@ const CompanyDetails = () => {
     console.log('Starting outreach campaign for', company.name);
   };
 
-  if (!company) return <div>Loading...</div>;
+  if (!company) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-black">
@@ -46,6 +51,8 @@ const CompanyDetails = () => {
                 {company.enriched ? (
                   <>
                     <TableHead className="text-orange-500">Company Name</TableHead>
+                    <TableHead className="text-orange-500">Industry</TableHead>
+                    <TableHead className="text-orange-500">Location</TableHead>
                     <TableHead className="text-orange-500">Website</TableHead>
                     <TableHead className="text-orange-500">Decision Makers</TableHead>
                     <TableHead className="text-orange-500">Contact Info</TableHead>
@@ -67,6 +74,8 @@ const CompanyDetails = () => {
                 {company.enriched ? (
                   <>
                     <TableCell className="text-white">{company.name}</TableCell>
+                    <TableCell className="text-white">{company.industry}</TableCell>
+                    <TableCell className="text-white">{company.location}</TableCell>
                     <TableCell className="text-white">{company.website}</TableCell>
                     <TableCell className="text-white">{company.decisionMakers}</TableCell>
                     <TableCell className="text-white">{company.contactInfo}</TableCell>
@@ -91,6 +100,13 @@ const CompanyDetails = () => {
               <Mail className="mr-2 h-4 w-4" />
               <Linkedin className="mr-2 h-4 w-4" />
               Start Outreach Campaign
+            </Button>
+          </div>
+        )}
+        {!company.enriched && (
+          <div className="flex justify-center">
+            <Button onClick={() => console.log('Start accumulating data for', company.name)} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+              Start Accumulating Data
             </Button>
           </div>
         )}
