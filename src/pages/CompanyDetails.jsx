@@ -1,47 +1,90 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Linkedin, Database } from "lucide-react";
+import { ArrowLeft, Database } from "lucide-react";
 import Navbar from '../components/Navbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { toast } from 'sonner';
 
 const CompanyDetails = () => {
-  const [companies, setCompanies] = useState([]);
+  const [companyData, setCompanyData] = useState([]);
   const [isEnriched, setIsEnriched] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [enriching, setEnriching] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchCompanyDetails = async () => {
-      // Simulating API call to fetch company details
-      const dummyCompanies = [
-        { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', website: 'techcorp.com', phoneNumber: '123-456-7890' },
-        { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', website: 'medihealth.com', phoneNumber: '234-567-8901' },
-        { id: '3', name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX', website: 'greenenergy.com', phoneNumber: '345-678-9012' },
-      ];
-      setCompanies(dummyCompanies);
-
-      // Check if the company is enriched (this would typically come from your API)
-      const enrichedStatus = ['1', '3'].includes(id); // Dummy logic for demonstration
-      setIsEnriched(enrichedStatus);
+    const fetchCompanyData = async () => {
+      try {
+        const response = await axios.get(`/api/company/${id}`);
+        setCompanyData(response.data);
+        setIsEnriched(id.startsWith('result_'));
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to fetch company data');
+        setLoading(false);
+      }
     };
 
-    fetchCompanyDetails();
+    fetchCompanyData();
   }, [id]);
 
   const handleBack = () => {
     navigate('/overview');
   };
 
-  const handleEnrichData = () => {
-    console.log('Enriching data for all companies');
-    setIsEnriched(true);
+  const handleEnrichData = async () => {
+    setEnriching(true);
+    try {
+      const response = await axios.post('/api/run-profile', {
+        file: id,
+        criteria: [] // You may want to define criteria or get it from somewhere
+      });
+      
+      if (response.data) {
+        setCompanyData(response.data);
+        setIsEnriched(true);
+        toast.success('Data enrichment completed successfully');
+      } else {
+        throw new Error('No data returned from enrichment process');
+      }
+    } catch (error) {
+      console.error('Error enriching data:', error);
+      toast.error('Failed to enrich data. Please try again.');
+    } finally {
+      setEnriching(false);
+    }
   };
 
-  const handleStartCampaign = () => {
-    console.log('Starting outreach campaign');
-    // Implement campaign logic here
+  const renderTableContent = () => {
+    if (isEnriched) {
+      // Handle enriched data
+      return Object.entries(companyData).map(([website, data]) => (
+        <TableRow key={website}>
+          <TableCell>{website}</TableCell>
+          <TableCell>{data.company_info.n_employees}</TableCell>
+          <TableCell>{data.company_info.Headquarters}</TableCell>
+          <TableCell>{data.company_info.businesstype}</TableCell>
+          <TableCell>{data.criteria_evaluation.total_points}</TableCell>
+        </TableRow>
+      ));
+    } else {
+      // Handle non-enriched data
+      return companyData.map((company, index) => (
+        <TableRow key={index}>
+          {Object.values(company).map((value, cellIndex) => (
+            <TableCell key={cellIndex}>{value}</TableCell>
+          ))}
+        </TableRow>
+      ));
+    }
   };
+
+  if (loading) return <div className="text-white">Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-black">
@@ -50,45 +93,43 @@ const CompanyDetails = () => {
         <Button onClick={handleBack} className="mb-4 bg-orange-500 hover:bg-orange-600 text-white">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Accumulated Companies
         </Button>
-        <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Company Details</h1>
-        <div className="bg-gray-800 rounded-lg overflow-hidden mb-8">
+        <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Company Details: {id.replace('.json', '')}</h1>
+        <div className="bg-gray-800 rounded-lg overflow-hidden mb-8 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-orange-500">Company Name</TableHead>
-                <TableHead className="text-orange-500">Industry</TableHead>
-                <TableHead className="text-orange-500">Location</TableHead>
-                <TableHead className="text-orange-500">Website</TableHead>
-                <TableHead className="text-orange-500">Phone Number</TableHead>
+                {isEnriched ? (
+                  <>
+                    <TableHead className="text-orange-500">Website</TableHead>
+                    <TableHead className="text-orange-500">Employees</TableHead>
+                    <TableHead className="text-orange-500">Headquarters</TableHead>
+                    <TableHead className="text-orange-500">Business Type</TableHead>
+                    <TableHead className="text-orange-500">Total Points</TableHead>
+                  </>
+                ) : (
+                  Object.keys(companyData[0] || {}).map((key, index) => (
+                    <TableHead key={index} className="text-orange-500">{key}</TableHead>
+                  ))
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {companies.map((company) => (
-                <TableRow key={company.id}>
-                  <TableCell className="text-white">{company.name}</TableCell>
-                  <TableCell className="text-white">{company.industry}</TableCell>
-                  <TableCell className="text-white">{company.location}</TableCell>
-                  <TableCell className="text-white">{company.website}</TableCell>
-                  <TableCell className="text-white">{company.phoneNumber}</TableCell>
-                </TableRow>
-              ))}
+              {renderTableContent()}
             </TableBody>
           </Table>
         </div>
-        <div className="flex justify-center">
-          {!isEnriched ? (
-            <Button onClick={handleEnrichData} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
+        {!isEnriched && (
+          <div className="flex justify-center">
+            <Button 
+              onClick={handleEnrichData} 
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2"
+              disabled={enriching}
+            >
               <Database className="mr-2 h-4 w-4" />
-              Enrich All Companies
+              {enriching ? 'Enriching...' : 'Enrich Company Data'}
             </Button>
-          ) : (
-            <Button onClick={handleStartCampaign} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2">
-              <Mail className="mr-2 h-4 w-4" />
-              <Linkedin className="mr-2 h-4 w-4" />
-              Start Outreach Campaign
-            </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

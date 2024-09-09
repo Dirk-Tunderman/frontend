@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
 import Navbar from '../components/Navbar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,15 +12,16 @@ const Overview = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulating fetching companies from an API
-    const dummyCompanies = [
-      { id: '1', name: 'TechCorp', industry: 'Technology', location: 'San Francisco, CA', enriched: true },
-      { id: '2', name: 'MediHealth', industry: 'Healthcare', location: 'Boston, MA', enriched: false },
-      { id: '3', name: 'GreenEnergy', industry: 'Renewable Energy', location: 'Austin, TX', enriched: true },
-      { id: '4', name: 'FinanceHub', industry: 'Finance', location: 'New York, NY', enriched: false },
-      { id: '5', name: 'ShopNow', industry: 'E-commerce', location: 'Seattle, WA', enriched: true },
-    ];
-    setCompanies(dummyCompanies);
+    const fetchCompanies = async () => {
+      try {
+        const response = await axios.get('/api/companies');
+        setCompanies(response.data);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      }
+    };
+
+    fetchCompanies();
   }, []);
 
   const handleCompanyClick = (companyId) => {
@@ -54,17 +55,17 @@ const Overview = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredCompanies.map((company) => (
             <Card 
-              key={company.id} 
+              key={company.name} 
               className="bg-gray-800 border border-orange-300 hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-              onClick={() => handleCompanyClick(company.id)}
+              onClick={() => handleCompanyClick(company.name)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <Building2 className="h-6 w-6 text-orange-500" />
                 </div>
-                <h3 className="font-semibold text-white text-lg mb-1">{company.name}</h3>
-                <p className="text-sm text-gray-300">{company.industry}</p>
+                <h3 className="font-semibold text-white text-lg mb-1">{company.profession}</h3>
                 <p className="text-sm text-gray-300">{company.location}</p>
+                <p className="text-sm text-gray-300">{company.date}</p>
                 <p className={`text-sm mt-2 ${company.enriched ? 'text-green-500' : 'text-red-500'}`}>
                   {company.enriched ? 'Enriched' : 'Not Enriched'}
                 </p>
