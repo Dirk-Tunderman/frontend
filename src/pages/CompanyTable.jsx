@@ -29,7 +29,7 @@ const CompanyTable = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-amber-50">
       <Navbar />
       <div className="p-8">
         <Button onClick={handleBack} className="mb-4 bg-orange-500 hover:bg-orange-600 text-white">

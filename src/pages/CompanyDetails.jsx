@@ -1,8 +1,10 @@
+//------------COMPANYDETAILS.JSX----------------//
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Database } from "lucide-react";
+import { ArrowLeft, Database, Mail } from "lucide-react";
 import Navbar from '../components/Navbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from 'sonner';
@@ -12,7 +14,6 @@ const CompanyDetails = () => {
   const [isEnriched, setIsEnriched] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [enriching, setEnriching] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -36,51 +37,62 @@ const CompanyDetails = () => {
     navigate('/overview');
   };
 
-  const handleEnrichData = async () => {
-    setEnriching(true);
+  const handleEnrichData = () => {
+    navigate(`/set-criteria/${id}`);
+  };
+
+  const handleCreateOutreachScript = async () => {
     try {
-      const response = await axios.post('/api/run-profile', {
-        file: id,
-        criteria: [] // You may want to define criteria or get it from somewhere
-      });
-      
-      if (response.data) {
-        setCompanyData(response.data);
-        setIsEnriched(true);
-        toast.success('Data enrichment completed successfully');
-      } else {
-        throw new Error('No data returned from enrichment process');
-      }
+        const response = await axios.post('/api/create-emails', { 
+            companyData,
+            filename: id  // 'id' contains the filename from useParams()
+        });
+        if (response.data.success) {
+            toast.success("Outreach script created successfully!");
+            // You might want to navigate to a new page using the new filename
+            // navigate(`/outreach/${response.data.filename}`);
+        } else {
+            toast.error(response.data.message || "Failed to create outreach script. Please try again.");
+        }
     } catch (error) {
-      console.error('Error enriching data:', error);
-      toast.error('Failed to enrich data. Please try again.');
-    } finally {
-      setEnriching(false);
+        console.error("Error creating outreach script:", error);
+        toast.error(error.response?.data?.message || error.message || "An error occurred while creating the outreach script.");
     }
+};
+
+  const handleRowClick = (companyName) => {
+    navigate(`/company/${id}/${encodeURIComponent(companyName)}`);
   };
 
   const renderTableContent = () => {
-    if (isEnriched) {
-      // Handle enriched data
-      return Object.entries(companyData).map(([website, data]) => (
-        <TableRow key={website}>
-          <TableCell>{website}</TableCell>
-          <TableCell>{data.company_info.n_employees}</TableCell>
-          <TableCell>{data.company_info.Headquarters}</TableCell>
-          <TableCell>{data.company_info.businesstype}</TableCell>
-          <TableCell>{data.criteria_evaluation.total_points}</TableCell>
-        </TableRow>
-      ));
-    } else {
-      // Handle non-enriched data
+    if (Array.isArray(companyData)) {
       return companyData.map((company, index) => (
-        <TableRow key={index}>
-          {Object.values(company).map((value, cellIndex) => (
-            <TableCell key={cellIndex}>{value}</TableCell>
+        <TableRow 
+          key={index} 
+          className="hover:bg-gray-700 cursor-pointer transition-colors"
+          onClick={() => handleRowClick(company.name || `Company${index + 1}`)}
+        >
+          {Object.entries(company).map(([key, value]) => (
+            <TableCell key={key}>{value}</TableCell>
           ))}
         </TableRow>
       ));
+    } else if (typeof companyData === 'object') {
+      return Object.entries(companyData).map(([website, data], index) => (
+        <TableRow 
+          key={index} 
+          className="hover:bg-gray-700 cursor-pointer transition-colors"
+          onClick={() => handleRowClick(website)}
+        >
+          <TableCell>{website}</TableCell>
+          <TableCell>{data.company_info?.n_employees || 'N/A'}</TableCell>
+          <TableCell>{data.company_info?.Headquarters || 'N/A'}</TableCell>
+          <TableCell>{data.company_info?.businesstype || 'N/A'}</TableCell>
+          <TableCell>{data.criteria_evaluation?.total_points || 'N/A'}</TableCell>
+        </TableRow>
+      ));
     }
+    return null;
   };
 
   if (loading) return <div className="text-white">Loading...</div>;
@@ -98,19 +110,20 @@ const CompanyDetails = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                {isEnriched ? (
-                  <>
-                    <TableHead className="text-orange-500">Website</TableHead>
-                    <TableHead className="text-orange-500">Employees</TableHead>
-                    <TableHead className="text-orange-500">Headquarters</TableHead>
-                    <TableHead className="text-orange-500">Business Type</TableHead>
-                    <TableHead className="text-orange-500">Total Points</TableHead>
-                  </>
-                ) : (
-                  Object.keys(companyData[0] || {}).map((key, index) => (
-                    <TableHead key={index} className="text-orange-500">{key}</TableHead>
-                  ))
-                )}
+                {Array.isArray(companyData) && companyData.length > 0
+                  ? Object.keys(companyData[0]).map((key) => (
+                      <TableHead key={key} className="text-orange-500">{key}</TableHead>
+                    ))
+                  : (
+                    <>
+                      <TableHead className="text-orange-500">Website</TableHead>
+                      <TableHead className="text-orange-500">Employees</TableHead>
+                      <TableHead className="text-orange-500">Headquarters</TableHead>
+                      <TableHead className="text-orange-500">Business Type</TableHead>
+                      <TableHead className="text-orange-500">Total Points</TableHead>
+                    </>
+                  )
+                }
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -118,18 +131,25 @@ const CompanyDetails = () => {
             </TableBody>
           </Table>
         </div>
-        {!isEnriched && (
-          <div className="flex justify-center">
+        <div className="flex justify-center">
+          {isEnriched ? (
+            <Button 
+              onClick={handleCreateOutreachScript} 
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-2"
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              Create Outreach Script
+            </Button>
+          ) : (
             <Button 
               onClick={handleEnrichData} 
               className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2"
-              disabled={enriching}
             >
               <Database className="mr-2 h-4 w-4" />
-              {enriching ? 'Enriching...' : 'Enrich Company Data'}
+              Enrich Company Data
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

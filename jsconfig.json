@@ -1,3 +1,5 @@
+//JSCONFIG.JSON
+
 {
   "compilerOptions": {
     "paths": {
