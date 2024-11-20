@@ -1,0 +1,51 @@
+.
+├── README.md
+├── bun.lockb
+├── dist
+│   ├── assets
+│   │   ├── index-B5DrrulL.css
+│   │   └── index-CCMGKuQY.js
+│   ├── favicon.ico
+│   ├── index.html
+│   └── placeholder.svg
+├── frontend.log
+├── gpt-engineer.toml
+├── index.html
+├── jsconfig.json
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   ├── favicon.ico
+│   └── placeholder.svg
+├── src
+│   ├── App.jsx
+│   ├── components
+│   │   └── ui
+│   ├── config
+│   │   └── axios.js
+│   ├── index.css
+│   ├── lib
+│   │   └── utils.js
+│   ├── main.jsx
+│   ├── nav-items.jsx
+│   └── pages
+│       ├── CompanyDashboard.jsx
+│       ├── CompanyDetails.jsx
+│       ├── CompanyTable.jsx
+│       ├── Criteria.jsx
+│       ├── EmailCreation.jsx
+│       ├── EmailLinkedInCreation.jsx
+│       ├── FinishedCompanyDashboard.jsx
+│       ├── FinishedCompanyLists.jsx
+│       ├── FinishedCompanyTable.jsx
+│       ├── Index.jsx
+│       ├── LinkedInDetails.jsx
+│       ├── Overview.jsx
+│       ├── SetCriteria.jsx
+│       └── SetLinkedInCriteria.jsx
+├── tailwind.config.js
+├── treee
+└── vite.config.js
+
+10 directories, 39 files

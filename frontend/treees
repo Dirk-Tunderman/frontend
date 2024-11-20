@@ -1,0 +1,110 @@
+.
+├── README.md
+├── app
+│   └── globals.css
+├── bun.lockb
+├── components.json
+├── dist
+│   ├── assets
+│   │   ├── index-CDAuVkmm.js
+│   │   └── index-COOdL4J2.css
+│   ├── favicon.ico
+│   ├── index.html
+│   └── placeholder.svg
+├── frontend.log
+├── gpt-engineer.toml
+├── index.html
+├── jsconfig.json
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   ├── favicon.ico
+│   └── placeholder.svg
+├── src
+│   ├── App.jsx
+│   ├── components
+│   │   ├── EmailList.jsx
+│   │   ├── FileMergeDialog.jsx
+│   │   ├── FinishedComDashPt2.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── ProblemSolutionSection.jsx
+│   │   ├── ui
+│   │   │   ├── accordion.jsx
+│   │   │   ├── alert-dialog.jsx
+│   │   │   ├── alert.jsx
+│   │   │   ├── aspect-ratio.jsx
+│   │   │   ├── avatar.jsx
+│   │   │   ├── badge.jsx
+│   │   │   ├── breadcrumb.jsx
+│   │   │   ├── button.jsx
+│   │   │   ├── calendar.jsx
+│   │   │   ├── card.tsx
+│   │   │   ├── carousel.jsx
+│   │   │   ├── checkbox.jsx
+│   │   │   ├── collapsible.jsx
+│   │   │   ├── command.jsx
+│   │   │   ├── context-menu.jsx
+│   │   │   ├── date-picker.jsx
+│   │   │   ├── dialog.jsx
+│   │   │   ├── drawer.jsx
+│   │   │   ├── dropdown-menu.jsx
+│   │   │   ├── form.jsx
+│   │   │   ├── hover-card.jsx
+│   │   │   ├── input-otp.jsx
+│   │   │   ├── input.jsx
+│   │   │   ├── label.jsx
+│   │   │   ├── menubar.jsx
+│   │   │   ├── navigation-menu.jsx
+│   │   │   ├── pagination.jsx
+│   │   │   ├── popover.jsx
+│   │   │   ├── progress.jsx
+│   │   │   ├── radio-group.jsx
+│   │   │   ├── resizable.jsx
+│   │   │   ├── scroll-area.jsx
+│   │   │   ├── select.jsx
+│   │   │   ├── separator.jsx
+│   │   │   ├── sheet.jsx
+│   │   │   ├── skeleton.jsx
+│   │   │   ├── slider.jsx
+│   │   │   ├── sonner.jsx
+│   │   │   ├── switch.jsx
+│   │   │   ├── table.jsx
+│   │   │   ├── tabs.jsx
+│   │   │   ├── textarea.jsx
+│   │   │   ├── toast.jsx
+│   │   │   ├── toaster.jsx
+│   │   │   ├── toggle-group.jsx
+│   │   │   ├── toggle.jsx
+│   │   │   ├── tooltip.jsx
+│   │   │   └── use-toast.js
+│   │   └── ui-empt
+│   │       └── tooltip.jsx
+│   ├── config
+│   │   └── axios.js
+│   ├── index.css
+│   ├── main.jsx
+│   ├── nav-items.jsx
+│   └── pages
+│       ├── CompanyDashboard.jsx
+│       ├── CompanyDetails.jsx
+│       ├── CompanyTable.jsx
+│       ├── Criteria.jsx
+│       ├── EmailCreation.jsx
+│       ├── EmailLinkedInCreation.jsx
+│       ├── EmailOverview.jsx
+│       ├── FinishedCompanyDashboard.jsx
+│       ├── FinishedCompanyLists.jsx
+│       ├── FinishedCompanyTable.jsx
+│       ├── Index.jsx
+│       ├── LinkedInDetails.jsx
+│       ├── Overview.jsx
+│       ├── SetCriteria.jsx
+│       └── SetLinkedInCriteria.jsx
+├── tailwind.config.js
+├── treee
+├── treees
+├── treez
+└── vite.config.js
+
+11 directories, 97 files
