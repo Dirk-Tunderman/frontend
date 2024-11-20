@@ -48,6 +48,22 @@ export default defineConfig(async ({ command, mode }) => {
     process.exit(1);
   }
 
+  const proxyConfig = {
+    configure: (proxy, _options) => {
+      proxy.on('error', (err, _req, _res) => {
+        console.log('proxy error', err);
+      });
+      proxy.on('proxyReq', (proxyReq, req, _res) => {
+        console.log('Sending Request to the Target:', req.method, req.url);
+        console.log('Request Headers:', req.headers);
+      });
+      proxy.on('proxyRes', (proxyRes, req, _res) => {
+        console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+        console.log('Response Headers:', proxyRes.headers);
+      });
+    }
+  };
+
   return {
     plugins: [react()],
     resolve: {
@@ -57,26 +73,31 @@ export default defineConfig(async ({ command, mode }) => {
     },
     server: {
       port: port,
-      strictPort: false, // Allow Vite to try other ports if the chosen one is not available
+      strictPort: false,
       proxy: {
+        // Main backend API
         '/api': {
-          target: 'http://localhost:8080',  // Update this to match your backend port
+          target: 'http://localhost:8080',
           changeOrigin: true,
           secure: false,
           ws: true,
-          configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              console.log('proxy error', err);
-            });
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log('Sending Request to the Target:', req.method, req.url);
-              console.log('Request Headers:', req.headers);
-            });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
-              console.log('Response Headers:', proxyRes.headers);
-            });
-          },
+          ...proxyConfig,
+        },
+        // Email management endpoints
+        '/api/email': {
+          target: 'http://localhost:8080',  // Same port as it's now integrated
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+          ...proxyConfig,
+        },
+        // Semantic API if needed
+        '/semantic': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+          ...proxyConfig,
         }
       },
     }

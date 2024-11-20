@@ -2,12 +2,9 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{js,jsx}",
-    "./components/**/*.{js,jsx}",
-    "./app/**/*.{js,jsx}",
     "./src/**/*.{js,jsx}",
+    "./index.html",
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -17,64 +14,97 @@ module.exports = {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ['Plus Jakarta Sans', 'sans-serif'],
-      },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // Direct color values
+        orange: {
+          500: '#ff6b00',
+          600: '#e65c00',
+        },
+        gray: {
+          700: '#374151',
+          800: '#1f2937',
+          900: '#111827',
+        },
+        white: '#ffffff',
+        black: '#000000',
+        
+        // System colors
+        border: "#1f2937",
+        input: "#1f2937",
+        ring: "#ff6b00",
+        background: "#000000",
+        foreground: "#ffffff",
+
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#ff6b00",
+          foreground: "#ffffff",
         },
+
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#1f2937",
+          foreground: "#ffffff",
         },
+
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#991b1b",
+          foreground: "#ffffff",
         },
+
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#1f2937",
+          foreground: "#9ca3af",
         },
+
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#ff6b00",
+          foreground: "#ffffff",
         },
+
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "#000000",
+          foreground: "#ffffff",
         },
+
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#1f2937",
+          foreground: "#ffffff",
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "0.5rem",
+        md: "0.375rem",
+        sm: "0.25rem",
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
+          from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          to: { height: 0 },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      // Add custom spacing if needed
+      spacing: {
+        // Add any custom spacing values you need
+      },
+      // Add custom font settings if needed
+      fontFamily: {
+        // Add any custom font families
+      },
+      // Add custom sizing if needed
+      minHeight: {
+        // Add any custom min-height values
+      },
+      maxHeight: {
+        // Add any custom max-height values
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
-};
+}

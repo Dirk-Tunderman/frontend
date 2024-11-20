@@ -74,15 +74,15 @@ const FinishedCompanyLists = () => {
   const handleDelete = async (filename, e) => {
     e.stopPropagation(); // Prevent triggering the card click
     try {
-      await axios.delete(`/api/delete-file/finished/${filename}`);
+      const axiosInstance = await createAxiosInstance();
+      await axiosInstance.delete(`/complete-file/${filename}`);
       toast.success(`Campaign deleted successfully`);
       // Refresh the files list
-      const axiosInstance = await createAxiosInstance();
       const response = await axiosInstance.get('/finished-companies');
       setFiles(response.data);
     } catch (error) {
       console.error("Error deleting file:", error);
-      toast.error(`Failed to delete campaign`);
+      toast.error(`Failed to delete campaign: ${error.response?.data?.error || error.message}`);
     }
   };
 

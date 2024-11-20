@@ -1,10 +1,8 @@
-//------------COMPANYDETAILS.JSX----------------//
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Database, Mail } from "lucide-react";
+import { ArrowLeft, Database, Mail, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import Navbar from '../components/Navbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from 'sonner';
@@ -14,6 +12,11 @@ const CompanyDetails = () => {
   const [isEnriched, setIsEnriched] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: null // null -> upDown -> up -> down -> upDown...
+  });
+  
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -33,6 +36,49 @@ const CompanyDetails = () => {
     fetchCompanyData();
   }, [id]);
 
+  const handleSort = (key) => {
+    let direction = 'up';
+    
+    if (sortConfig.key === key) {
+      if (sortConfig.direction === null) direction = 'up';
+      else if (sortConfig.direction === 'up') direction = 'down';
+      else if (sortConfig.direction === 'down') direction = null;
+    }
+
+    setSortConfig({ key, direction });
+  };
+
+  const getSortedData = () => {
+    if (!sortConfig.key || !sortConfig.direction) return companyData;
+
+    const sorted = Object.entries(companyData).sort(([, a], [, b]) => {
+      let aValue, bValue;
+
+      if (sortConfig.key === 'employees') {
+        aValue = a.company_info?.n_employees || 0;
+        bValue = b.company_info?.n_employees || 0;
+      } else if (sortConfig.key === 'points') {
+        aValue = a.criteria_evaluation?.total_points || 0;
+        bValue = b.criteria_evaluation?.total_points || 0;
+      }
+
+      if (sortConfig.direction === 'up') {
+        return bValue - aValue; // Descending
+      } else {
+        return aValue - bValue; // Ascending
+      }
+    });
+
+    return Object.fromEntries(sorted);
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <ArrowUpDown className="ml-2 h-4 w-4" />;
+    if (sortConfig.direction === 'up') return <ArrowUp className="ml-2 h-4 w-4" />;
+    if (sortConfig.direction === 'down') return <ArrowDown className="ml-2 h-4 w-4" />;
+    return <ArrowUpDown className="ml-2 h-4 w-4" />;
+  };
+
   const handleBack = () => {
     navigate('/overview');
   };
@@ -43,22 +89,20 @@ const CompanyDetails = () => {
 
   const handleCreateOutreachScript = async () => {
     try {
-        const response = await axios.post('/api/create-emails', { 
-            companyData,
-            filename: id  // 'id' contains the filename from useParams()
-        });
-        if (response.data.success) {
-            toast.success("Outreach script created successfully!");
-            // You might want to navigate to a new page using the new filename
-            // navigate(`/outreach/${response.data.filename}`);
-        } else {
-            toast.error(response.data.message || "Failed to create outreach script. Please try again.");
-        }
+      const response = await axios.post('/api/create-emails', { 
+        companyData,
+        filename: id
+      });
+      if (response.data.success) {
+        toast.success("Outreach script created successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to create outreach script. Please try again.");
+      }
     } catch (error) {
-        console.error("Error creating outreach script:", error);
-        toast.error(error.response?.data?.message || error.message || "An error occurred while creating the outreach script.");
+      console.error("Error creating outreach script:", error);
+      toast.error(error.response?.data?.message || error.message || "An error occurred while creating the outreach script.");
     }
-};
+  };
 
   const handleRowClick = (companyName) => {
     navigate(`/company/${id}/${encodeURIComponent(companyName)}`);
@@ -78,7 +122,8 @@ const CompanyDetails = () => {
         </TableRow>
       ));
     } else if (typeof companyData === 'object') {
-      return Object.entries(companyData).map(([website, data], index) => (
+      const sortedData = getSortedData();
+      return Object.entries(sortedData).map(([website, data], index) => (
         <TableRow 
           key={index} 
           className="hover:bg-gray-700 cursor-pointer transition-colors"
@@ -86,7 +131,7 @@ const CompanyDetails = () => {
         >
           <TableCell>{website}</TableCell>
           <TableCell>{data.company_info?.n_employees || 'N/A'}</TableCell>
-          <TableCell>{data.company_info?.Headquarters || 'N/A'}</TableCell>
+          <TableCell>{data.company_info?.headquarters || 'N/A'}</TableCell>
           <TableCell>{data.company_info?.businesstype || 'N/A'}</TableCell>
           <TableCell>{data.criteria_evaluation?.total_points || 'N/A'}</TableCell>
         </TableRow>
@@ -110,20 +155,21 @@ const CompanyDetails = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                {Array.isArray(companyData) && companyData.length > 0
-                  ? Object.keys(companyData[0]).map((key) => (
-                      <TableHead key={key} className="text-orange-500">{key}</TableHead>
-                    ))
-                  : (
-                    <>
-                      <TableHead className="text-orange-500">Website</TableHead>
-                      <TableHead className="text-orange-500">Employees</TableHead>
-                      <TableHead className="text-orange-500">Headquarters</TableHead>
-                      <TableHead className="text-orange-500">Business Type</TableHead>
-                      <TableHead className="text-orange-500">Total Points</TableHead>
-                    </>
-                  )
-                }
+                <TableHead className="text-orange-500">Website</TableHead>
+                <TableHead 
+                  className="text-orange-500 cursor-pointer hover:text-orange-400 flex items-center"
+                  onClick={() => handleSort('employees')}
+                >
+                  Employees {getSortIcon('employees')}
+                </TableHead>
+                <TableHead className="text-orange-500">Headquarters</TableHead>
+                <TableHead className="text-orange-500">Business Type</TableHead>
+                <TableHead 
+                  className="text-orange-500 cursor-pointer hover:text-orange-400 flex items-center"
+                  onClick={() => handleSort('points')}
+                >
+                  Total Points {getSortIcon('points')}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

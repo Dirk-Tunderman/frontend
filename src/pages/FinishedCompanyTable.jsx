@@ -1,32 +1,28 @@
+// src/pages/FinishedCompanyTable.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft, Mail, ArrowUpDown } from "lucide-react";
 import Navbar from '../components/Navbar';
-import { Check, X } from "lucide-react"; // Keep this import at the top
-
-import { Switch } from "../components/ui/switch"; // Add this import at the top
-
+import { Check, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+
+
 
 const FinishedCompanyTable = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [campaignRunning, setCampaignRunning] = useState(false);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'ascending'
+  });
+  
   const navigate = useNavigate();
   const { filename } = useParams();
 
@@ -41,29 +37,25 @@ const FinishedCompanyTable = () => {
           throw new Error('No data received from the API');
         }
 
-        // Transform the data according to the specified requirements
         const transformedData = response.data.map(companyObj => {
-          // Get the company name and data from the object
           const companyName = Object.keys(companyObj)[0];
           const companyData = companyObj[companyName];
-
-          // Get the correct nested data
-          const info = companyData.company_info;
-          const outreachData = companyData.outreach_data;
+          const info = companyData.company_info?.company_info || {};
+          const outreachData = companyData.outreach_data || {};
           
           return {
             name: companyName,
-            about: info.company_type || 'N/A',
-            n_employees: info.n_employees === 'Not provided' ? info.company_size : info.n_employees || 'N/A',
-            url: info.url || 'N/A',
+            type: info.company_type || 'N/A',
+            size: info.n_employees || info.company_size || 'N/A',
             headquarters: info.headquarters || 'N/A',
-            total_points: companyData.evaluation_criteria?.total_points || 0,
-            email_send: outreachData?.email_send || 0,
-            cold_call_made: outreachData?.cold_call_made || 0
+            email_found: outreachData.email_dm_found || 0,
+            linkedin_found: outreachData.linkedin_dm_found || 0,
+            email_sent: outreachData.email_send || 0,
+            call_made: outreachData.cold_call_made || 0
           };
         });
 
-        console.log('Final transformed data:', transformedData);
+        console.log('Transformed data:', transformedData);
         setCompanies(transformedData);
         setLoading(false);
       } catch (err) {
@@ -76,12 +68,12 @@ const FinishedCompanyTable = () => {
     fetchCompanies();
   }, [filename]);
 
-  const handleBack = () => {
-    navigate('/finished-companies');
-  };
-
-  const handleRowClick = (companyName) => {
-    navigate(`/finished-company-dashboard/${filename}/${encodeURIComponent(companyName)}`);
+  const handleSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
   };
 
   const handleCallStatusChange = async (companyName, newStatus) => {
@@ -89,13 +81,12 @@ const FinishedCompanyTable = () => {
       await axios.post('/api/update-call-status', {
         filename,
         companyName,
-        status: newStatus ? 1 : 0  // Convert boolean to 1 or 0
+        status: newStatus ? 1 : 0
       });
       
-      // Update local state
       setCompanies(companies.map(company => {
         if (company.name === companyName) {
-          return { ...company, cold_call_made: newStatus ? 1 : 0 };
+          return { ...company, call_made: newStatus ? 1 : 0 };
         }
         return company;
       }));
@@ -107,25 +98,51 @@ const FinishedCompanyTable = () => {
     }
   };
 
+  const getSortedCompanies = () => {
+    if (!sortConfig.key) {
+      return companies;
+    }
+
+    return [...companies].sort((a, b) => {
+      if (a[sortConfig.key] === b[sortConfig.key]) {
+        return 0;
+      }
+      
+      if (sortConfig.direction === 'ascending') {
+        return a[sortConfig.key] < b[sortConfig.key] ? -1 : 1;
+      } else {
+        return a[sortConfig.key] > b[sortConfig.key] ? -1 : 1;
+      }
+    });
+  };
+
+  const renderSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-2 h-4 w-4 inline" />;
+    }
+    
+    if (sortConfig.direction === 'ascending') {
+      return <ArrowUpDown className="ml-2 h-4 w-4 inline text-orange-500" />;
+    }
+    
+    return <ArrowUpDown className="ml-2 h-4 w-4 inline text-orange-500 rotate-180" />;
+  };
+
+  const handleBack = () => {
+    navigate('/finished-companies');
+  };
+
+  const handleRowClick = (companyName) => {
+    navigate(`/finished-company-dashboard/${filename}/${encodeURIComponent(companyName)}`);
+  };
+  
   const handleSendEmails = async () => {
     try {
       setCampaignRunning(true);
-      console.log('Sending request to /api/send-emails');
-      console.log('Data being sent:', { filename, companies });
       const response = await axios.post('/api/send-emails', { filename, companies });
-      console.log('Response:', response);
       toast.success('Email campaign started successfully');
     } catch (error) {
       console.error('Error starting email campaign:', error);
-      if (error.response) {
-        console.error('Error response:', error.response.data);
-        console.error('Error status:', error.response.status);
-        console.error('Error headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('Error request:', error.request);
-      } else {
-        console.error('Error message:', error.message);
-      }
       toast.error('Failed to start email campaign');
     } finally {
       setCampaignRunning(false);
@@ -151,69 +168,114 @@ const FinishedCompanyTable = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-orange-500">Company Name</TableHead>
-                  <TableHead className="text-orange-500">Business Type</TableHead>
-                  <TableHead className="text-orange-500">Size</TableHead>
-                  <TableHead className="text-orange-500">Website</TableHead>
-                  <TableHead className="text-orange-500">Location</TableHead>
-                  <TableHead className="text-orange-500">Score</TableHead>
-                  <TableHead className="text-orange-500">Email Sent</TableHead>
-                  <TableHead className="text-orange-500">Call Made</TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('name')}
+                  >
+                    Company Name {renderSortIcon('name')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('type')}
+                  >
+                    Business Type {renderSortIcon('type')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('size')}
+                  >
+                    Size {renderSortIcon('size')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('headquarters')}
+                  >
+                    Location {renderSortIcon('headquarters')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('email_found')}
+                  >
+                    Email Found {renderSortIcon('email_found')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('linkedin_found')}
+                  >
+                    LinkedIn Found {renderSortIcon('linkedin_found')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('email_sent')}
+                  >
+                    Email Sent {renderSortIcon('email_sent')}
+                  </TableHead>
+                  <TableHead 
+                    className="text-orange-500 cursor-pointer hover:text-orange-400"
+                    onClick={() => handleSort('call_made')}
+                  >
+                    Call Made {renderSortIcon('call_made')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {companies.map((company, index) => (
+                {getSortedCompanies().map((company, index) => (
                   <TableRow 
                     key={index}
                     className="hover:bg-gray-700 cursor-pointer transition-colors"
                     onClick={() => handleRowClick(company.name)}
                   >
-                    <TableCell className="text-white">{company.name || 'N/A'}</TableCell>
-                    <TableCell className="text-white">{company.about || 'N/A'}</TableCell>
-                    <TableCell className="text-white">{company.n_employees || 'N/A'}</TableCell>
-                    <TableCell>
-                      {company.url !== 'N/A' ? (
-                        <a 
-                          href={company.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-blue-400 hover:underline"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {company.url}
-                        </a>
-                      ) : (
-                        <span className="text-white">N/A</span>
-                      )}
+                    <TableCell className="text-white">{company.name}</TableCell>
+                    <TableCell className="text-white">{company.type}</TableCell>
+                    <TableCell className="text-white">{company.size}</TableCell>
+                    <TableCell className="text-white">{company.headquarters}</TableCell>
+                    <TableCell className="text-white">
+                      <div className="flex items-center justify-center">
+                        {company.email_found ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500" />
+                        )}
+                      </div>
                     </TableCell>
-                    <TableCell className="text-white">{company.headquarters || 'N/A'}</TableCell>
-                    <TableCell className="text-white">{company.total_points}</TableCell>
                     <TableCell className="text-white">
-                        <div className="flex items-center justify-center">
-                            {company.email_send === 1 ? (
-                            <Check className="h-5 w-5 text-green-500" />
-                            ) : (
-                            <X className="h-5 w-5 text-red-500" />
-                            )}
-                        </div>
-                        </TableCell>
+                      <div className="flex items-center justify-center">
+                        {company.linkedin_found ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500" />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-white">
-                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            <Switch
-                            checked={company.cold_call_made === 1}
-                            onCheckedChange={(checked) => handleCallStatusChange(company.name, checked)}
-                            className="data-[state=checked]:bg-orange-500"
-                            />
-                            <span>{company.cold_call_made === 1 ? 'Yes' : 'No'}</span>
-                        </div>
-                        </TableCell>
+                      <div className="flex items-center justify-center">
+                        {company.email_sent ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500" />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-white">
+                      <div 
+                        className="flex items-center gap-2" 
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Switch
+                          checked={company.call_made === 1}
+                          onCheckedChange={(checked) => handleCallStatusChange(company.name, checked)}
+                          className="data-[state=checked]:bg-orange-500"
+                        />
+                        <span>{company.call_made === 1 ? 'Yes' : 'No'}</span>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
         )}
-
+        {/* Add the Alert Dialog here, between these lines */}
         <div className="flex justify-center mt-8">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -239,6 +301,8 @@ const FinishedCompanyTable = () => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
+        {/* End of Alert Dialog */}
+
       </div>
     </div>
   );

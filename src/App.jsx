@@ -1,7 +1,7 @@
 //-------APP.JSX--------//
 
 
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui-empt/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { navItems, hiddenRoutes } from "./nav-items";

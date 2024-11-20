@@ -1,8 +1,9 @@
-import { MapPin, Building2, CheckSquare } from "lucide-react";
+import { MapPin, Building2, CheckSquare, Mail } from "lucide-react";
 import Index from "./pages/Index.jsx";
 import Overview from "./pages/Overview.jsx";
 import CompanyDetails from "./pages/CompanyDetails.jsx";
 import FinishedCompanyLists from "./pages/FinishedCompanyLists.jsx";
+import EmailOverview from "./pages/EmailOverview.jsx";
 
 export const navItems = [
   {
@@ -22,6 +23,12 @@ export const navItems = [
     to: "/finished-companies",
     icon: <CheckSquare className="h-4 w-4" />,
     page: <FinishedCompanyLists />,
+  },
+  {
+    title: "Email Responses",
+    to: "/email-overview",
+    icon: <Mail className="h-4 w-4" />,
+    page: <EmailOverview />,
   },
 ];
 

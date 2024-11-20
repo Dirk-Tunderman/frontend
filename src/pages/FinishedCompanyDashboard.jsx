@@ -1,3 +1,4 @@
+// src/pages/FinishedCompanyDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -5,6 +6,8 @@ import { ArrowLeft, Building2, Users, Globe, Mail, BarChart, Phone, MapPin, Cale
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from '../components/Navbar';
+import ProblemSolutionSection from '../components/ProblemSolutionSection';
+import FinishedComDashPt2 from '../components/FinishedComDashPt2';
 
 const FinishedCompanyDashboard = () => {
   const [companyData, setCompanyData] = useState(null);
@@ -13,26 +16,23 @@ const FinishedCompanyDashboard = () => {
   const navigate = useNavigate();
   const { filename, companyName } = useParams();
 
+  // Move handleBack inside the component
+  const handleBack = () => {
+    navigate(`/finished-company-table/${filename}`);
+  };
+
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
-        console.log('Fetching data for:', filename, companyName);
+        console.log('Fetching data with params:', { filename, companyName });
         const response = await axios.get(`/api/finished-company/${encodeURIComponent(filename)}/${encodeURIComponent(companyName)}`);
-        console.log('API Response:', response.data);
+        console.log('Raw API Response:', response.data);
         
         if (response.data.error) {
           throw new Error(response.data.error);
         }
-        
-        // Extract the nested company_info structure
-        const formattedData = {
-          company_info: response.data.company_info?.company_info || {},
-          decision_maker: response.data.company_info?.decision_maker || response.data.decision_maker || [],
-          email: response.data.company_info?.email || response.data.email || {},
-          outreach_data: response.data.company_info?.outreach_data || response.data.outreach_data || {}
-        };
-        
-        setCompanyData(formattedData);
+
+        setCompanyData(response.data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching company data:', err);
@@ -40,38 +40,63 @@ const FinishedCompanyDashboard = () => {
         setLoading(false);
       }
     };
-  
-    fetchCompanyData();
+
+    if (filename && companyName) {
+      fetchCompanyData();
+    }
   }, [filename, companyName]);
 
-  const handleBack = () => {
-    navigate(`/finished-company-table/${filename}`);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-2xl font-bold text-orange-500">Loading...</div>
+      </div>
+    );
+  }
 
-  if (loading) return <div className="text-white">Loading...</div>;
-  if (error) return <div className="text-red-500">Error: {error}</div>;
-  if (!companyData) return <div className="text-white">No data available</div>;
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-xl text-red-500">{error}</div>
+      </div>
+    );
+  }
 
-  const company = companyData.company_info || {};
-  const decisionMaker = Array.isArray(companyData.decision_maker) ? 
-    companyData.decision_maker[0] : companyData.decision_maker || {};
-  const email = companyData.email || {};
-  const outreachData = companyData.outreach_data || {};
+  if (!companyData) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-xl">No data available</div>
+      </div>
+    );
+  }
+
+  // Safely access nested data
+  const company = companyData?.company_info?.company_info || {};
+  const decisionMaker = Array.isArray(companyData?.decision_maker) ? 
+    companyData.decision_maker[0] : companyData?.decision_maker || {};
+  const outreachData = companyData?.outreach_data || {};
+  const allDecisionMakers = companyData?.company_info?.decision_makers || [];
+  const vacancies = companyData?.company_info?.company_info?.vacancies || [];
 
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
       <div className="p-8">
         {/* Back Button */}
-        <Button onClick={handleBack} className="mb-4 bg-orange-500 hover:bg-orange-600 text-white">
+        <Button 
+          onClick={handleBack} 
+          className="mb-4 bg-orange-500 hover:bg-orange-600 text-white"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Company List
         </Button>
 
-        {/* Company Name and Outreach Status Banner */}
+        {/* Company Name Banner */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-center text-orange-500 mb-4">{company.company_name || 'N/A'}</h1>
-          
-          {/* Outreach Status Cards - Prominent Position */}
+          <h1 className="text-4xl font-bold text-center text-orange-500 mb-4">
+            {company?.company_name || 'N/A'}
+          </h1>
+
+          {/* Outreach Status Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-800 p-4 rounded-lg border border-orange-500">
             <StatusCard 
               title="Email Found" 
@@ -96,34 +121,34 @@ const FinishedCompanyDashboard = () => {
           </div>
         </div>
 
-        {/* Key Company Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <QuickInfoCard 
-            icon={<Building2 />} 
-            label="Company Type" 
-            value={company.company_type}
-          />
-          <QuickInfoCard 
-            icon={<Users />} 
-            label="Size" 
-            value={company.company_size}
-          />
-          <QuickInfoCard 
-            icon={<MapPin />} 
-            label="Location" 
-            value={company.headquarters}
-          />
-          <QuickInfoCard 
-            icon={<Briefcase />} 
-            label="Business Type" 
-            value={company.businesstype}
-          />
-        </div>
-
-        {/* Two Column Layout for Main Content */}
+        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Company Details */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <QuickInfoCard 
+                icon={<Building2 />} 
+                label="Company Type" 
+                value={company?.company_type}
+              />
+              <QuickInfoCard 
+                icon={<Users />} 
+                label="Size" 
+                value={company?.company_size}
+              />
+              <QuickInfoCard 
+                icon={<MapPin />} 
+                label="Location" 
+                value={company?.headquarters}
+              />
+              <QuickInfoCard 
+                icon={<Globe />} 
+                label="Business Type" 
+                value={company?.businesstype}
+              />
+            </div>
+
             {/* About Section */}
             <Card className="bg-gray-800 border-orange-500">
               <CardHeader>
@@ -133,40 +158,28 @@ const FinishedCompanyDashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-lg">{company.about || 'N/A'}</p>
+                <p className="text-lg">{company?.about || 'N/A'}</p>
               </CardContent>
             </Card>
 
-            {/* Description and Services */}
+            {/* Description Cards */}
             <div className="grid grid-cols-1 gap-6">
               <DescriptionCard 
                 title="Company Description" 
-                content={company.company_description}
+                content={company?.company_description}
                 icon={<Building2 className="h-5 w-5" />}
               />
               <DescriptionCard 
                 title="Services & Products" 
-                content={company.service_product_desc}
+                content={company?.service_product_desc}
                 icon={<Briefcase className="h-5 w-5" />}
               />
             </div>
-
-            {/* Recent News */}
-            {company.recent_news && company.recent_news.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-semibold mb-4 text-orange-500">Recent News</h2>
-                <div className="grid grid-cols-1 gap-4">
-                  {company.recent_news.map((news, index) => (
-                    <NewsCard key={index} news={news} />
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Right Column - Decision Maker and Contact */}
-          <div className="space-y-8">
-            {/* Decision Maker Card - Prominent */}
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Decision Maker Card */}
             <Card className="bg-gray-800 border-orange-500">
               <CardHeader>
                 <CardTitle className="text-xl text-orange-500">Key Decision Maker</CardTitle>
@@ -190,39 +203,42 @@ const FinishedCompanyDashboard = () => {
                       </a>
                     </div>
                   )}
-                  {decisionMaker?.general_description_profile && (
-                    <div className="mt-4">
-                      <span className="font-semibold block mb-1">Profile:</span>
-                      <p className="text-sm text-gray-300">{decisionMaker.general_description_profile}</p>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Contact & Quick Facts */}
+            {/* Quick Facts */}
             <Card className="bg-gray-800 border-orange-500">
               <CardHeader>
                 <CardTitle>Quick Facts</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <InfoRow label="Founded" value={company.founded} />
-                <InfoRow label="Employees" value={company.n_employees} />
-                <InfoRow label="Followers" value={company.followers} />
-                <InfoRow label="Website" value={company.url} isLink />
+                <InfoRow label="Founded" value={company?.founded} />
+                <InfoRow label="Employees" value={company?.n_employees} />
+                <InfoRow label="Followers" value={company?.followers} />
+                <InfoRow label="Website" value={company?.url} isLink />
               </CardContent>
             </Card>
-
-            {/* Generated Email Preview */}
-            <EmailPreviewCard email={email} />
           </div>
         </div>
+        {/* Decision Makers Section */}
+        <DecisionMakersSection decisionMakers={allDecisionMakers} />
+        
+        {/* Vacancies Section */}
+        <VacanciesSection vacancies={vacancies} />
+        {/* Problem Solution Section */}
+        {companyData.problem_solution && (
+          <ProblemSolutionSection problemSolution={companyData.problem_solution} />
+        )}
+
+        {/* Part 2 Content */}
+        <FinishedComDashPt2 companyData={companyData} />
       </div>
     </div>
   );
 };
 
-// Helper Components
+// Helper Components (keep these the same)
 const StatusCard = ({ title, value, icon }) => (
   <div className="text-center p-3 bg-gray-900 rounded-lg">
     <div className="flex justify-center mb-2">{icon}</div>
@@ -255,18 +271,6 @@ const DescriptionCard = ({ title, content, icon }) => (
   </Card>
 );
 
-const NewsCard = ({ news }) => (
-  <Card className="bg-gray-800 border-orange-500">
-    <CardHeader>
-      <CardTitle>{news.title}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p><strong>Date:</strong> {news.date}</p>
-      <p className="mt-2">{news.summary}</p>
-    </CardContent>
-  </Card>
-);
-
 const InfoRow = ({ label, value, isLink }) => (
   <div className="flex justify-between items-center">
     <span className="font-semibold">{label}:</span>
@@ -280,27 +284,71 @@ const InfoRow = ({ label, value, isLink }) => (
   </div>
 );
 
-const EmailPreviewCard = ({ email }) => (
-  <Card className="bg-gray-800 border-orange-500">
+
+// New Components - Add these right before the export default line
+const DecisionMakersSection = ({ decisionMakers }) => (
+  <Card className="bg-gray-800 border-orange-500 mt-8">
     <CardHeader>
-      <CardTitle className="flex items-center">
-        <Mail className="mr-2" />
-        Email Preview
-      </CardTitle>
+      <CardTitle className="text-xl text-orange-500">All Decision Makers</CardTitle>
     </CardHeader>
-    <CardContent className="space-y-3">
-      <div>
-        <span className="font-semibold">To:</span> {Array.isArray(email?.email_reciever) ? email.email_reciever.join(', ') : email?.email_reciever || 'N/A'}
+    <CardContent>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {decisionMakers?.map((dm, index) => (
+          <Card key={index} className="bg-gray-900 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-lg text-orange-500">{dm.full_name || 'N/A'}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <InfoRow label="Position" value={dm.decision_maker_position} />
+              <InfoRow label="Confidence Score" value={dm.decision_maker_confidence_score} />
+              <InfoRow label="Country" value={dm.country_origins} />
+              <InfoRow label="Time at Company" value={dm.time_at_company || 'N/A'} />
+              <InfoRow label="Email" value={dm.personal_email || 'N/A'} />
+              {dm.personal_linkedin_url && (
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">LinkedIn:</span>
+                  <a 
+                    href={dm.personal_linkedin_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-blue-400 hover:underline"
+                  >
+                    View Profile
+                  </a>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
-      <div>
-        <span className="font-semibold">Subject:</span> {email?.subjectline || 'N/A'}
-      </div>
-      <div className="mt-4 p-3 bg-gray-900 rounded-md whitespace-pre-wrap text-sm">
-        {email?.email?.replace(/\\n/g, '\n') || 'No email content available'}
-      </div>
-      <div className="mt-2 text-sm text-gray-400">
-        <span className="font-semibold">Timezone:</span> {email?.timezone || 'N/A'}
-      </div>
+    </CardContent>
+  </Card>
+);
+
+const VacanciesSection = ({ vacancies }) => (
+  <Card className="bg-gray-800 border-orange-500 mt-8">
+    <CardHeader>
+      <CardTitle className="text-xl text-orange-500">Open Positions</CardTitle>
+    </CardHeader>
+    <CardContent>
+      {vacancies && vacancies.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4">
+          {vacancies.map((vacancy, index) => (
+            <div key={index} className="bg-gray-900 p-4 rounded-lg">
+              <h3 className="font-semibold text-lg mb-2">
+                {vacancy.position !== 'N/A' ? vacancy.position : 'Position Not Specified'}
+              </h3>
+              <p className="text-gray-300">
+                {vacancy.description !== 'N/A' ? vacancy.description : 'No description available'}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-4 bg-gray-900 rounded-lg">
+          <p className="text-gray-300">No open positions available at this time</p>
+        </div>
+      )}
     </CardContent>
   </Card>
 );

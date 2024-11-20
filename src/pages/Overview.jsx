@@ -152,7 +152,7 @@ const Overview = () => {
     const formatDisplayName = (name) => {
       return name.replace(/[*]/g, ' ').replace(/_/g, ' ');
     };
-  
+
     return (
       <Card 
         className="bg-gray-800 border border-blue-300 hover:border-blue-400 hover:shadow-lg transition-shadow duration-300"
@@ -219,7 +219,7 @@ const Overview = () => {
     <div className="min-h-screen bg-black">
       <Navbar />
       <div className="p-8">
-        <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Accumulated Data</h1>
+        <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Lists to Prep</h1>
         <div className="mb-6 max-w-xs mx-auto">
           <Select onValueChange={setFilter} defaultValue="all">
             <SelectTrigger className="w-full bg-gray-800 text-white border-orange-500">
