@@ -49,9 +49,9 @@ const FinishedCompanyTable = () => {
             size: info.n_employees || info.company_size || 'N/A',
             headquarters: info.headquarters || 'N/A',
             email_found: outreachData.email_dm_found || 0,
-            linkedin_found: outreachData.linkedin_dm_found || 0,
             email_sent: outreachData.email_send || 0,
-            call_made: outreachData.cold_call_made || 0
+            call_made: outreachData.cold_call_made || 0,
+            total_points: info.score || 0
           };
         });
 
@@ -149,6 +149,19 @@ const FinishedCompanyTable = () => {
     }
   };
 
+  const handleLinkedInConnect = async () => {
+    try {
+      setCampaignRunning(true);
+      const response = await axios.post('/api/linkedin-connect', { filename, companies });
+      toast.success('LinkedIn connection campaign started successfully');
+    } catch (error) {
+      console.error('Error starting LinkedIn campaign:', error);
+      toast.error('Failed to start LinkedIn campaign');
+    } finally {
+      setCampaignRunning(false);
+    }
+  };
+
   if (loading) return <div className="text-white">Loading...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
@@ -156,9 +169,43 @@ const FinishedCompanyTable = () => {
     <div className="min-h-screen bg-black">
       <Navbar />
       <div className="p-8">
-        <Button onClick={handleBack} className="mb-4 bg-orange-500 hover:bg-orange-600 text-white">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Finished Company Lists
-        </Button>
+        <div className="flex justify-between items-center mb-4">
+          <Button onClick={handleBack} className="bg-orange-500 hover:bg-orange-600 text-white">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Finished Company Lists
+          </Button>
+          <div className="flex gap-4">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                  disabled={campaignRunning}
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  {campaignRunning ? 'Campaign Running' : 'Send All Emails'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action will send out emails to all companies in this list. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSendEmails}>Send Emails</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <Button 
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={handleLinkedInConnect}
+              disabled={campaignRunning}
+            >
+              LinkedIn Connect
+            </Button>
+          </div>
+        </div>
         <h1 className="text-3xl font-bold text-center text-orange-500 mb-8">Finished Companies: {filename}</h1>
         
         {companies.length === 0 ? (
@@ -194,15 +241,15 @@ const FinishedCompanyTable = () => {
                   </TableHead>
                   <TableHead 
                     className="text-orange-500 cursor-pointer hover:text-orange-400"
-                    onClick={() => handleSort('email_found')}
+                    onClick={() => handleSort('total_points')}
                   >
-                    Email Found {renderSortIcon('email_found')}
+                    Total Points {renderSortIcon('total_points')}
                   </TableHead>
                   <TableHead 
                     className="text-orange-500 cursor-pointer hover:text-orange-400"
-                    onClick={() => handleSort('linkedin_found')}
+                    onClick={() => handleSort('email_found')}
                   >
-                    LinkedIn Found {renderSortIcon('linkedin_found')}
+                    Email Found {renderSortIcon('email_found')}
                   </TableHead>
                   <TableHead 
                     className="text-orange-500 cursor-pointer hover:text-orange-400"
@@ -229,18 +276,10 @@ const FinishedCompanyTable = () => {
                     <TableCell className="text-white">{company.type}</TableCell>
                     <TableCell className="text-white">{company.size}</TableCell>
                     <TableCell className="text-white">{company.headquarters}</TableCell>
+                    <TableCell className="text-white">{company.total_points}</TableCell>
                     <TableCell className="text-white">
                       <div className="flex items-center justify-center">
                         {company.email_found ? (
-                          <Check className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <X className="h-5 w-5 text-red-500" />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-white">
-                      <div className="flex items-center justify-center">
-                        {company.linkedin_found ? (
                           <Check className="h-5 w-5 text-green-500" />
                         ) : (
                           <X className="h-5 w-5 text-red-500" />
@@ -275,33 +314,6 @@ const FinishedCompanyTable = () => {
             </Table>
           </div>
         )}
-        {/* Add the Alert Dialog here, between these lines */}
-        <div className="flex justify-center mt-8">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                className="bg-green-500 hover:bg-green-600 text-white"
-                disabled={campaignRunning}
-              >
-                <Mail className="mr-2 h-4 w-4" />
-                {campaignRunning ? 'Campaign Running' : 'Send All Emails'}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action will send out emails to all companies in this list. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSendEmails}>Send Emails</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-        {/* End of Alert Dialog */}
 
       </div>
     </div>
