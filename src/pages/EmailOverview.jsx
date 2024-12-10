@@ -124,7 +124,7 @@ function EmailOverview() {
         sender: replyEmail.recipient, // Replace with actual sender email
         receiver: replyEmail.sender,
         original_email_id: replyEmail.email_id,
-        convo_id: replyEmail.convo_id,
+        email_id: replyEmail.email_id,
         reply: {
           subject: `${replyEmail.subject}`,
           body: replyContent
